@@ -1,0 +1,20 @@
+{
+    "name": "yiicod/hauth",
+    "type": "yii-extension",
+    "license": "New BSD License",
+    "authors": [
+        {
+            "name": "Alexey Orlov",
+            "email": "aaorlov88@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "hybridauth/hybridauth": "2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "yiicod\\hauth\\": "/"
+        }
+    }
+}
