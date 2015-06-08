@@ -3,7 +3,6 @@
 namespace yiicod\hauth\components;
 
 use CApplicationComponent;
-use CMap;
 use Hybrid_Auth;
 use Hybrid_Endpoint;
 use Yii;

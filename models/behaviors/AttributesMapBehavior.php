@@ -3,8 +3,7 @@
 namespace yiicod\mailqueue\models\behaviors;
 
 use CActiveRecordBehavior;
-use Yii;
-use CJSON;
+use yii\base\InvalidParamException;
 
 /**
  * Class get and set for model Comment
@@ -109,7 +108,7 @@ class AttributesMapBehavior extends CActiveRecordBehavior
     /**
      * 
      * @param type $name
-     * @return type
+     * @return boolean
      */
     public function hasFieldByModelMap($name)
     {

@@ -8,7 +8,6 @@ namespace yiicod\hauth\controllers\behaviors;
  */
 
 use CEvent;
-use yiicod\hauth\controllers\SocialAuthBase;
 
 class HybridAuthBehavior extends HybridAuthBaseBehavior
 {
