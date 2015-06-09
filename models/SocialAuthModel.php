@@ -84,13 +84,13 @@ class SocialAuthModel extends CActiveRecord
     {
         return array(
             'AttributesMapBehavior' => array(
-                'class' => 'yiicod\mailqueue\models\behaviors\AttributesMapBehavior',
+                'class' => 'yiicod\hauth\models\behaviors\AttributesMapBehavior',
                 'attributesMap' => Yii::app()->getComponent('hauth')->modelMap['SocialAuth']
             ),
             'CTimestampBehavior' => array(
                 'class' => 'zii.behaviors.CTimestampBehavior',
-                'createAttribute' => in_array(Yii::app()->getComponent('mailqueue')->modelMap['MailQueue']['fieldCreateDate'], $this->attributeNames()) ?
-                    Yii::app()->getComponent('mailqueue')->modelMap['MailQueue']['fieldCreateDate'] : null,
+                'createAttribute' => in_array(Yii::app()->getComponent('hauth')->modelMap['SocialAuth']['fieldCreateDate'], $this->attributeNames()) ?
+                    Yii::app()->getComponent('hauth')->modelMap['SocialAuth']['fieldCreateDate'] : null,
                 'updateAttribute' => null,
                 'timestampExpression' => 'date("Y-m-d H:i:s")',
             )

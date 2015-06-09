@@ -1,6 +1,6 @@
 <?php
 
-namespace yiicod\mailqueue\models\behaviors;
+namespace yiicod\hauth\models\behaviors;
 
 use CActiveRecordBehavior;
 use yii\base\InvalidParamException;
