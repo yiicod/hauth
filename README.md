@@ -138,28 +138,27 @@ class HybridAuthBehavior extends HybridAuthBaseBehavior
         $userModel = $event->params['userModel'];
         $providerProfile = $event->params['providerProfile'];
 
-        if ($data['action'] == 'signup') {
-            $userAttrs = Yii::app()->db->createCommand()
-                    ->select('*')
-                    ->from('User')
-                    ->where('email=:email', array(':email' => $providerProfile->email))
-                    ->queryRow();
+        
+        $userAttrs = Yii::app()->db->createCommand()
+                ->select('*')
+                ->from('User')
+                ->where('email=:email', array(':email' => $providerProfile->email))
+                ->queryRow();
+        if ($userAttrs === false && $data['action'] == 'signup') {
+            $userModel->setScenario('signup.social');
+            $userModel->userName = $this->uniqueName(preg_replace('/\s/', '', $this->sanitizeTitleWithTranslit($providerProfile->displayName)));
+            $userModel->email = empty($providerProfile->email) ? (md5($providerProfile->identifier) . '@' . $data['provider'] . '.com') : $providerProfile->email;
+            $userModel->password = $userModel->getOpenUserPassword();
 
-            if ($userAttrs === false) {
-                $userModel->setScenario('signup.social');
-                $userModel->userName = $this->uniqueName(preg_replace('/\s/', '', $this->sanitizeTitleWithTranslit($providerProfile->displayName)));
-                $userModel->email = empty($providerProfile->email) ? (md5($providerProfile->identifier) . '@' . $data['provider'] . '.com') : $providerProfile->email;
-                $userModel->password = $userModel->getOpenUserPassword();
-
-                if ($userModel->save()) {
-                    $data['isNewUser'] = true;
-                    $data['identifier'] = $providerProfile->identifier;
-                }
-            } else {
-                $userModel->setAttributes($userAttrs);
-                $userModel->setPrimaryKey($userAttrs['id']);
+            if ($userModel->save()) {
+                $data['isNewUser'] = true;
+                $data['identifier'] = $providerProfile->identifier;
             }
+        } elseif(is_array($userAttrs)) {
+            $userModel->setAttributes($userAttrs);
+            $userModel->setPrimaryKey($userAttrs['id']);
         }
+        
     }
 
     /**
