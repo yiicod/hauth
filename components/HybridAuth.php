@@ -106,7 +106,7 @@ class HybridAuth extends CApplicationComponent
                 'lang/' . Yii::app()->language . '/',
                 'lang&' . Yii::app()->language,
                 '?lang&' . Yii::app()->language,
-                    ), '', Yii::app()->createAbsoluteUrl($this->callbackRoute, array('lang' => false))), '/'),
+                    ), '', Yii::app()->createAbsoluteUrl($this->callbackRoute)), '/'),
             'providers' => $this->providers,
             'debug_mode' => $this->debugMode,
             'debug_file' => $this->debugFile

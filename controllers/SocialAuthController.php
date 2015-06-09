@@ -155,6 +155,7 @@ class SocialAuthController extends SocialAuthBase
         if (empty($value) || is_null($value)) {
             return $default;
         }
+        return $value;
     }
 
 }
