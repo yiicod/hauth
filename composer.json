@@ -7,6 +7,11 @@
             "name": "Alexey Orlov",
             "email": "aaorlov88@gmail.com",
             "role": "Developer"
+        },
+        {
+            "name": "Dmitry Turchanin",
+            "email": "dimetrioos@gmail.com",
+            "role": "Developer"
         }
     ],
     "require": {
