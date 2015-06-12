@@ -69,7 +69,6 @@ class AttributesMapBehavior extends CActiveRecordBehavior
         if (strpos($name, 'field') === 0 && $this->hasFieldByModelMap($name)) {
             return true;
         }
-//        $fieldAttr = 'field' . ucfirst($name);
         if ($this->hasAttr($name)) {
             return true;
         } else {
@@ -84,11 +83,10 @@ class AttributesMapBehavior extends CActiveRecordBehavior
      */
     public function canSetProperty($name)
     {
-//        $fieldAttr = 'field' . ucfirst($name);
         if ($this->hasAttr($name)) {
             return true;
         } else {
-            return parent::canGetProperty($name);
+            return parent::canSetProperty($name);
         }
     }
 

@@ -5,6 +5,7 @@ namespace yiicod\hauth\components;
 use CApplicationComponent;
 use Hybrid_Auth;
 use Hybrid_Endpoint;
+use Hybrid_Provider_Adapter;
 use Yii;
 
 /**
@@ -52,7 +53,7 @@ class HybridAuth extends CApplicationComponent
     /**
      * Returns the HybridAuth object
      *
-     * @return null
+     * @return Hybrid_Auth
      */
     public function getHybridAuth()
     {
@@ -62,7 +63,7 @@ class HybridAuth extends CApplicationComponent
     /**
      * 
      * @param type $provider
-     * @return type
+     * @return Hybrid_Provider_Adapter
      */
     public function getAdapter($provider)
     {
@@ -81,7 +82,7 @@ class HybridAuth extends CApplicationComponent
      * Gets profile of the provider
      *
      * @param $provider
-     * @return bool
+     * @return Object
      */
     public function getProviderProfile($provider)
     {
