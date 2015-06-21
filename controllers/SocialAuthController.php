@@ -3,8 +3,10 @@
 namespace yiicod\hauth\controllers;
 
 use CEvent;
+use CLogger;
 use CMap;
 use Exception;
+use Hybrid_Exception;
 use Yii;
 
 /**
@@ -112,10 +114,18 @@ class SocialAuthController extends SocialAuthBase
 
     /**
      * Hybrid auth callback
+     * @return boolean
      */
     public function actionCallback()
     {
-        Yii::app()->hybridAuth->getResponse();
+        try {
+            Yii::app()->hybridAuth->getResponse();
+        } catch (Hybrid_Exception $e) {
+            if ($e->getMessage() === "Oophs. Error!" && Yii::app()->hybridAuth->debugMode === false) {
+                return false;
+            }
+            Yii::log($e->getMessage(), CLogger::LEVEL_ERROR);
+        }
     }
 
     /**
