@@ -2,7 +2,7 @@
 
 namespace yiicod\hauth\models;
 
-/**
+/*
  * This is the model class for table "SocialAuth".
  *
  * The followings are the available columns in table 'SocialAuth':
@@ -17,7 +17,6 @@ use Yii;
 
 class SocialAuthModel extends CActiveRecord
 {
-
     /**
      * @return string the associated database table name
      */
@@ -33,15 +32,15 @@ class SocialAuthModel extends CActiveRecord
     {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
-        return array(
-            array('userId, provider, identifier', 'required'),
-            array('userId', 'numerical', 'integerOnly' => true),
-            array('provider, identifier', 'length', 'max' => 100),
-            array('createDate', 'safe'),
+        return [
+            ['userId, provider, identifier', 'required'],
+            ['userId', 'numerical', 'integerOnly' => true],
+            ['provider, identifier', 'length', 'max' => 100],
+            ['createDate', 'safe'],
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, userId, provider, identifier, createDate', 'safe', 'on' => 'search'),
-        );
+            ['id, userId, provider, identifier, createDate', 'safe', 'on' => 'search'],
+        ];
     }
 
     /**
@@ -51,8 +50,8 @@ class SocialAuthModel extends CActiveRecord
     {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
-        return array(
-        );
+        return [
+        ];
     }
 
     /**
@@ -60,19 +59,21 @@ class SocialAuthModel extends CActiveRecord
      */
     public function attributeLabels()
     {
-        return array(
+        return [
             'id' => 'ID',
             'userId' => 'User',
             'provider' => 'Provider',
             'identifier' => 'Identifier',
             'createDate' => 'Create Date',
-        );
+        ];
     }
 
     /**
      * Returns the static model of the specified AR class.
      * Please note that you should have this exact method in all your CActiveRecord descendants!
+     *
      * @param string $className active record class name.
+     *
      * @return SocialAuthModel the static model class
      */
     public static function model($className = __CLASS__)
@@ -82,19 +83,18 @@ class SocialAuthModel extends CActiveRecord
 
     public function behaviors()
     {
-        return array(
-            'AttributesMapBehavior' => array(
+        return [
+            'AttributesMapBehavior' => [
                 'class' => 'yiicod\hauth\models\behaviors\AttributesMapBehavior',
-                'attributesMap' => Yii::app()->getComponent('hauth')->modelMap['SocialAuth']
-            ),
-            'CTimestampBehavior' => array(
+                'attributesMap' => Yii::app()->getComponent('hauth')->modelMap['SocialAuth'],
+            ],
+            'CTimestampBehavior' => [
                 'class' => 'zii.behaviors.CTimestampBehavior',
                 'createAttribute' => in_array(Yii::app()->getComponent('hauth')->modelMap['SocialAuth']['fieldCreateDate'], $this->attributeNames()) ?
                     Yii::app()->getComponent('hauth')->modelMap['SocialAuth']['fieldCreateDate'] : null,
                 'updateAttribute' => null,
                 'timestampExpression' => 'date("Y-m-d H:i:s")',
-            )
-        );
+            ],
+        ];
     }
-
 }

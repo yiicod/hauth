@@ -2,7 +2,7 @@
 
 namespace yiicod\hauth\controllers\behaviors;
 
-/**
+/*
  * SocialAuth behavior with event for controller action
  * @author Orlov Alexey <aaorlov88@gmail.com>
  */
@@ -11,12 +11,12 @@ use CEvent;
 
 class HybridAuthBehavior extends HybridAuthBaseBehavior
 {
-
     /**
      * With this event you can write logic for find exist user model or 
      * create new user from providerProfile data.
+     *
      * @param CEvent $event Object has next params sender -> SocialAuthController, 
-     * params -> array('userModel' => UserModel, 'providerProfile' => providerProfile, 'data' => array('isNewUser' => boolean, ...))
+     *                      params -> array('userModel' => UserModel, 'providerProfile' => providerProfile, 'data' => array('isNewUser' => boolean, ...))
      */
     public function userFind($event)
     {

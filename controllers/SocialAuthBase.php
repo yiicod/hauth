@@ -8,30 +8,30 @@ use Yii;
 
 class SocialAuthBase extends Controller
 {
-
     protected function attachEvent($name, $event)
     {
         if (null === Yii::app()->getComponent('emitter')) {
             return false;
         }
-        Yii::app()->emitter->emit($name, array(
-            $event
-        ));
+        Yii::app()->emitter->emit($name, [
+            $event,
+        ]);
     }
 
     /**
-     * Action create user
+     * Action create user.
+     *
      * @param 
      */
     public function onUserFind($event)
-    {      
-        $this->attachEvent('yiicod.hauth.controllers.SocialAuthBase.userFind', $event);                
-        $this->raiseEvent('onUserFind', $event);        
-        
+    {
+        $this->attachEvent('yiicod.hauth.controllers.SocialAuthBase.userFind', $event);
+        $this->raiseEvent('onUserFind', $event);
     }
 
     /**
-     * Action error connect
+     * Action error connect.
+     *
      * @param CModel
      */
     public function onConnect($event)
@@ -41,7 +41,8 @@ class SocialAuthBase extends Controller
     }
 
     /**
-     * Error
+     * Error.
+     *
      * @param CModel
      */
     public function onError($event)
@@ -49,5 +50,4 @@ class SocialAuthBase extends Controller
         $this->attachEvent('yiicod.hauth.controllers.SocialAuthBase.error', $event);
         $this->raiseEvent('onError', $event);
     }
-
 }

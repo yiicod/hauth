@@ -4,7 +4,7 @@ class m150603_084348_SocialAuth extends CDbMigration
 {
     public function up()
     {
-        $this->execute("
+        $this->execute('
             CREATE TABLE IF NOT EXISTS `SocialAuth` (
               `id` int(11) NOT NULL AUTO_INCREMENT,
               `userId` int(11) NOT NULL,
@@ -14,13 +14,13 @@ class m150603_084348_SocialAuth extends CDbMigration
               PRIMARY KEY (`id`),
               UNIQUE (`provider`, `identifier`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8
-        ");
+        ');
     }
 
     public function down()
     {
-        $this->execute("
+        $this->execute('
             DROP TABLE IF EXISTS `SocialAuth`;
-        ");
+        ');
     }
 }

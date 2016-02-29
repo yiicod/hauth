@@ -3,6 +3,9 @@
 namespace yiicod\hauth\components;
 
 use CApplicationComponent;
+use CLogger;
+use ErrorException;
+use Exception;
 use Hybrid_Auth;
 use Hybrid_Endpoint;
 use Hybrid_Provider_Adapter;
@@ -10,14 +13,12 @@ use Yii;
 
 /**
  * Class HybridAuth
- * Component to work with hybridAuth
+ * Component to work with hybridAuth.
  *
  * @author Dmitry Turchanin
- * @package app\components
  */
 class HybridAuth extends CApplicationComponent
 {
-
     /**
      * @var string Route for callbacks
      */
@@ -26,7 +27,7 @@ class HybridAuth extends CApplicationComponent
     /**
      * @var array List of providers
      */
-    public $providers = array();
+    public $providers = [];
 
     /**
      * @var bool Flag for switching debug mode
@@ -39,7 +40,8 @@ class HybridAuth extends CApplicationComponent
     public $debugFile = '';
 
     /**
-     * Instance for Hybrid_Auth
+     * Instance for Hybrid_Auth.
+     *
      * @var null
      */
     private $hybridAuth = null;
@@ -51,7 +53,7 @@ class HybridAuth extends CApplicationComponent
     }
 
     /**
-     * Returns the HybridAuth object
+     * Returns the HybridAuth object.
      *
      * @return Hybrid_Auth
      */
@@ -61,8 +63,8 @@ class HybridAuth extends CApplicationComponent
     }
 
     /**
-     * 
      * @param type $provider
+     *
      * @return Hybrid_Provider_Adapter
      */
     public function getAdapter($provider)
@@ -71,18 +73,40 @@ class HybridAuth extends CApplicationComponent
     }
 
     /**
-     * Process response
+     * Process response.
      */
     public function getResponse()
     {
-        Hybrid_Endpoint::process();
+
+        // Overriding the error handler
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            // We are only interested in one kind of error
+            if (strpos($errstr, 'Undefined index') == 0) {
+                //We throw an exception that will be catched in the test
+                throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+            }
+
+            return false;
+        });
+
+        try {
+            Hybrid_Endpoint::process();
+        } catch (Exception $e) {
+            Yii::log($e->getMessage(), CLogger::LEVEL_ERROR, 'system.socialAuth');
+            // Very important : restoring the previous error handler
+            restore_error_handler();
+        }
+
+        // Very important : restoring the previous error handler
+        restore_error_handler();
     }
 
     /**
-     * Gets profile of the provider
+     * Gets profile of the provider.
      *
      * @param $provider
-     * @return Object
+     *
+     * @return object
      */
     public function getProviderProfile($provider)
     {
@@ -90,28 +114,29 @@ class HybridAuth extends CApplicationComponent
             return false;
         }
         $adapter = $this->hybridAuth->getAdapter($provider);
+
         return $adapter->getUserProfile();
     }
 
     /**
-     * Returns array of config
+     * Returns array of config.
      *
      * @return array
      */
     private function getConfig()
     {
+        $baseUrl = rtrim(str_replace([
+            'lang/'.Yii::app()->language,
+            'lang/'.Yii::app()->language.'/',
+            'lang&'.Yii::app()->language,
+            '?lang&'.Yii::app()->language,
+                        ], '', Yii::app()->createAbsoluteUrl($this->callbackRoute)), '/');
 
-        return array(
-            'base_url' => rtrim(str_replace(array(
-                'lang/' . Yii::app()->language,
-                'lang/' . Yii::app()->language . '/',
-                'lang&' . Yii::app()->language,
-                '?lang&' . Yii::app()->language,
-                    ), '', Yii::app()->createAbsoluteUrl($this->callbackRoute)), '/'),
+        return [
+            'base_url' => $baseUrl,
             'providers' => $this->providers,
             'debug_mode' => $this->debugMode,
-            'debug_file' => $this->debugFile
-        );
+            'debug_file' => $this->debugFile,
+        ];
     }
-
 }

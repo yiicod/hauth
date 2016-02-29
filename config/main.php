@@ -1,60 +1,59 @@
 <?php
 
-return array(
-    'modelMap' => array(
-        'SocialAuth' => array(
+return [
+    'modelMap' => [
+        'SocialAuth' => [
             'alias' => 'yiicod\hauth\models\SocialAuthModel',
             'class' => 'yiicod\hauth\models\SocialAuthModel',
             'fieldUserId' => 'userId',
             'fieldProvider' => 'provider',
             'fieldIdentifier' => 'identifier',
             'fieldCreateDate' => 'createDate',
-        ),
-        'User' => array(
+        ],
+        'User' => [
             'alias' => 'yiicod\auth\models\UserModel',
             'class' => 'yiicod\auth\models\UserModel',
-        )
-    ),
-    'controllers' => array(
-        'controllerMap' => array(
-            'default' => array(
+        ],
+    ],
+    'controllers' => [
+        'controllerMap' => [
+            'default' => [
                 'socialAuth' => 'yiicod\hauth\controllers\SocialAuthController',
-            ),
-        ),
-        'default' => array(
-            'socialAuth' => array(
+            ],
+        ],
+        'default' => [
+            'socialAuth' => [
                 'layout' => '',
-                'filters' => array('accessControl'),
-                'accessRules' => array(
-                    array(
+                'filters' => ['accessControl'],
+                'accessRules' => [
+                    [
                         'allow',
-                        'actions' => array('connect'),
-                        'users' => array('?')
-                    ),
-                    array(
+                        'actions' => ['connect'],
+                        'users' => ['?'],
+                    ],
+                    [
                         'allow',
-                        'actions' => array('callback'),
-                        'users' => array('*')
-                    ),
-                    array(
+                        'actions' => ['callback'],
+                        'users' => ['*'],
+                    ],
+                    [
                         'deny',
-                        'actions' => array(),
-                        'users' => array('*')
-                    )
-                ),
-            ),
-        ),
-    ),
+                        'actions' => [],
+                        'users' => ['*'],
+                    ],
+                ],
+            ],
+        ],
+    ],
     'hybridAuthBehavior' => 'yiicod\hauth\controllers\behaviors\HybridAuthBehavior',
-    'components' => array(
-        'hybridAuth' => array(
+    'components' => [
+        'hybridAuth' => [
             'class' => 'yiicod\hauth\components\HybridAuth',
             'callbackRoute' => '/socialAuth/callback',
-            'providers' => array(
-            ),
+            'providers' => [
+            ],
             'debugMode' => false,
             'debugFile' => '',
-        ),
-    ),
-);
-
+        ],
+    ],
+];

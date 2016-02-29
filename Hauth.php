@@ -7,30 +7,29 @@ use Yii;
 use CApplicationComponent;
 
 /**
- * Cms extension settings
+ * Cms extension settings.
+ *
  * @author Orlov Alexey <aaorlov88@gmail.com>
  */
 class Hauth extends CApplicationComponent
 {
+    /**
+     * @var array table settings
+     */
+    public $modelMap = [];
 
     /**
-     * @var ARRAY table settings
+     * @var array components settings
      */
-    public $modelMap = array();
-
-    /**
-     * @var ARRAY components settings
-     */
-    public $components = array();
+    public $components = [];
 
     /**
      * @var array Controllers settings
      */
-    public $controllers = array();
+    public $controllers = [];
 
     /**
-     *
-     * @var type 
+     * @var type
      */
     public $hybridAuthBehavior = null;
 
@@ -38,7 +37,7 @@ class Hauth extends CApplicationComponent
     {
         parent::init();
         //Merge main extension config with local extension config
-        $config = include(dirname(__FILE__) . '/config/main.php');
+        $config = include dirname(__FILE__).'/config/main.php';
         foreach ($config as $key => $value) {
             if (is_array($value)) {
                 //@todo Think about merge array 
@@ -62,9 +61,18 @@ class Hauth extends CApplicationComponent
 
         Yii::import($this->modelMap['User']['alias']);
         Yii::import($this->modelMap['SocialAuth']['alias']);
-        Yii::setPathOfAlias('yiicod', realpath(dirname(__FILE__) . '/..'));
+        Yii::setPathOfAlias('yiicod', realpath(dirname(__FILE__).'/..'));
         //Set components
-        Yii::app()->setComponents($this->components);
+        $exists = Yii::app()->getComponents(false);
+        foreach ($this->components as $component => $params) {
+            if (isset($exists[$component]) && is_object($exists[$component])) {
+                unset($this->components[$component]);
+            } elseif (isset($exists[$component])) {
+                $this->components[$component] = \CMap::mergeArray($params, $exists[$component]);
+            }
+        }
+        Yii::app()->setComponents(
+            $this->components, false
+        );
     }
-
 }

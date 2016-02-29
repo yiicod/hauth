@@ -6,19 +6,16 @@ use CEvent;
 use CLogger;
 use CMap;
 use Exception;
-use Hybrid_Exception;
 use Yii;
 
 /**
  * Class SocialAuthController
  * Controller for work with social networks: login, process callbacks etc.
- *
  */
 class SocialAuthController extends SocialAuthBase
 {
-
     /**
-     * Init method
+     * Init method.
      */
     public function init()
     {
@@ -34,7 +31,8 @@ class SocialAuthController extends SocialAuthBase
     {
         $module = Yii::app()->controller->module === null ? 'default' : Yii::app()->controller->module->id;
         $value = @Yii::app()->getComponent('hauth')->controllers[$module][Yii::app()->controller->id]['filters'];
-        return CMap::mergeArray(parent::filters(), $this->filterParam(@Yii::app()->getComponent('hauth')->controllers[$module][Yii::app()->controller->id]['filters'], array())
+
+        return CMap::mergeArray(parent::filters(), $this->filterParam(@Yii::app()->getComponent('hauth')->controllers[$module][Yii::app()->controller->id]['filters'], [])
         );
     }
 
@@ -44,12 +42,14 @@ class SocialAuthController extends SocialAuthBase
     public function accessRules()
     {
         $module = Yii::app()->controller->module === null ? 'default' : Yii::app()->controller->module->id;
-        return CMap::mergeArray(parent::accessRules(), $this->filterParam(@Yii::app()->getComponent('hauth')->controllers[$module][Yii::app()->controller->id]['accessRules'], array())
+
+        return CMap::mergeArray(parent::accessRules(), $this->filterParam(@Yii::app()->getComponent('hauth')->controllers[$module][Yii::app()->controller->id]['accessRules'], [])
         );
     }
 
     /**
      * Connect action.
+     *
      * @param array $provider
      */
     public function actionConnect($provider, $action = 'signup')
@@ -58,28 +58,29 @@ class SocialAuthController extends SocialAuthBase
             $adapter = Yii::app()->hybridAuth->getHybridAuth()->authenticate(ucfirst(strtolower($provider)));
 
             $providerProfile = $adapter->getUserProfile();
-            $data = array(
+            $data = [
                 'isNewUser' => false,
                 'provider' => $provider,
-                'action' => $action
-            );
+                'action' => $action,
+            ];
 
             $socialAuthClass = Yii::app()->getComponent('hauth')->modelMap['SocialAuth']['class'];
-            $socialAuthModel = $socialAuthClass::model()->findByAttributes(array(
+            $socialAuthModel = $socialAuthClass::model()->findByAttributes([
                 $socialAuthClass::model()->fieldProvider => $provider,
-                $socialAuthClass::model()->fieldIdentifier => $providerProfile->identifier
-            ));
+                $socialAuthClass::model()->fieldIdentifier => $providerProfile->identifier,
+            ]);
             $userClass = Yii::app()->getComponent('hauth')->modelMap['User']['class'];
 
             if (null === $socialAuthModel) {
                 $socialAuthModel = new $socialAuthClass();
                 $userModel = new $userClass();
 
-                $this->onUserFind(new CEvent($this, array(
+                $this->onUserFind(new CEvent($this, [
                     'data' => $data,
                     'userModel' => $userModel,
-                    'providerProfile' => $providerProfile
-                        )
+                    'socialAuthModel' => $socialAuthModel,
+                    'providerProfile' => $providerProfile,
+                        ]
                 ));
 
                 $socialAuthModel->userId = $userModel->id;
@@ -92,39 +93,44 @@ class SocialAuthController extends SocialAuthBase
             } else {
                 $userModel = $userClass::model()->findByPk($socialAuthModel->userId);
                 if ($userModel === null) {
-                    throw new Exception('Can not find user model with id - ' . $socialAuthModel->userId, 500);
+                    throw new Exception('Can not find user model with id - '.$socialAuthModel->userId, 500);
                 }
             }
 
-            $this->onConnect(new CEvent($this, array(
+            $this->onConnect(new CEvent($this, [
                 'data' => $data,
                 'userModel' => $userModel,
                 'socialAuthModel' => $socialAuthModel,
-                'providerProfile' => $providerProfile
-                    )
+                'providerProfile' => $providerProfile,
+                    ]
             ));
         } catch (Exception $e) {
-
-            $this->onError(new CEvent($this, array(
+            $this->onError(new CEvent($this, [
                 'exeption' => $e,
-                    )
+                'action' => $action,
+                    ]
             ));
+
+            throw new \CHttpException(409, 'Something wrong');
         }
     }
 
     /**
-     * Hybrid auth callback
-     * @return boolean
+     * Hybrid auth callback.
+     *
+     * @return bool
      */
     public function actionCallback()
     {
         try {
             Yii::app()->hybridAuth->getResponse();
-        } catch (Hybrid_Exception $e) {
-            if ($e->getMessage() === "Oophs. Error!" && Yii::app()->hybridAuth->debugMode === false) {
+        } catch (Exception $e) {
+            if ($e->getMessage() === 'Oophs. Error!' && Yii::app()->hybridAuth->debugMode === false) {
                 return false;
             }
-            Yii::log($e->getMessage(), CLogger::LEVEL_ERROR);
+            Yii::log($e->getMessage(), CLogger::LEVEL_ERROR, 'system.socialAuth');
+
+            throw new \CHttpException(409, 'Something wrong');
         }
     }
 
@@ -133,16 +139,18 @@ class SocialAuthController extends SocialAuthBase
      */
     public function behaviors()
     {
-        return CMap::mergeArray(parent::behaviors(), array(
-                    'HybridAuthBehavior' => array(
-                        'class' => Yii::app()->getComponent('hauth')->hybridAuthBehavior
-                    )
-        ));
+        return CMap::mergeArray(parent::behaviors(), [
+                    'HybridAuthBehavior' => [
+                        'class' => Yii::app()->getComponent('hauth')->hybridAuthBehavior,
+                    ],
+        ]);
     }
 
     /**
-     * Implode error to string
+     * Implode error to string.
+     *
      * @param array $errors
+     *
      * @return string
      */
     protected function implodeError(array $errors)
@@ -151,13 +159,16 @@ class SocialAuthController extends SocialAuthBase
         foreach ($errors as $error) {
             $errorString .= implode(', ', $error);
         }
+
         return $errorString;
     }
 
     /**
-     * Get param from config
-     * @param mixed $value
+     * Get param from config.
+     *
+     * @param mixed  $value
      * @param string $default
+     *
      * @return string
      */
     protected function filterParam($value, $default = '')
@@ -165,7 +176,7 @@ class SocialAuthController extends SocialAuthBase
         if (empty($value) || is_null($value)) {
             return $default;
         }
+
         return $value;
     }
-
 }
